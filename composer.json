@@ -1,0 +1,29 @@
+{
+  "name": "ingelby/horoscopeastrology",
+  "description": "Yii2 IEX cloud Wrapper",
+  "type": "library",
+  "license": "Proprietary",
+  "authors": [
+    {
+      "name": "Eng Wei Chua",
+      "email": "engwei.chua@ingelby.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Ingelby\\HoroscopeAstrology\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=7.0.0",
+    "ingelby/toolbox": "dev-master"
+  },
+  "require-dev": {
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:ingelby/toolbox.git"
+    }
+  ]
+}

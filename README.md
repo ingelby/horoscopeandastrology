@@ -1,2 +1,1 @@
-# horoscopeandastrology
-Handler for horoscopes-and-astrology.com API
+# Yii2 Horoscope and Astrology
