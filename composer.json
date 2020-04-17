@@ -1,6 +1,6 @@
 {
-  "name": "ingelby/horoscopeastrology",
-  "description": "Yii2 IEX cloud Wrapper",
+  "name": "ingelby/horoscopeandastrology",
+  "description": "Yii2 Horoscope and Astrology API Wrapper",
   "type": "library",
   "license": "Proprietary",
   "authors": [
