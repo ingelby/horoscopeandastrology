@@ -34,7 +34,7 @@ class DailyHoroscopeHandler extends AbstractHandler
 			$model = new DailyHoroscope();
 			$model->setAttributes($response);
 			foreach($model->dailyhoroscope as $starSign=>$value):
-				if($starSign==$sign){
+				if(strtolower($starSign)==strtolower($sign)){
 					return $value;
 				}
 			endforeach;
