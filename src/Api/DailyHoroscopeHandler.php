@@ -19,7 +19,7 @@ class DailyHoroscopeHandler extends AbstractHandler
      * @throws HoroscopeAstrologyResponseException
      * @throws HoroscopeAstrologyRateLimitException
      */
-    public function getDailyHroscope(string $symbol)
+    public function getDailyHoroscope(string $sign = null)
     {
         $response = $this->fetch(
             'json'
@@ -30,10 +30,23 @@ class DailyHoroscopeHandler extends AbstractHandler
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No news for symbol: ' . $symbol);
         }
 
-		$model = new DailyHoroscope();
-		$model->setAttributes($response);
 
-        return $model;
+        if($sign){ //-- star sign requested so provide just the daily horoscope for that sign
+			$model = new DailyHoroscope();
+			$model->setAttributes($response);
+			foreach($model->dailhoroscope as $starSign=>$value):
+				if($starSign==$sign){
+					return $value;
+				}
+			endforeach;
+			return false;
+		}else{ //-- no sign provided so give all the data
+			$model = new DailyHoroscope();
+			$model->setAttributes($response);
+
+			return $model;
+		}
+
     }
 }
 
