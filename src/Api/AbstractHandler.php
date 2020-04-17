@@ -60,7 +60,7 @@ class AbstractHandler extends InguzzleHandler
     public function fetch(string $call)
     {
 
-        $cacheKey = static::CACHE_KEY . $call);
+        $cacheKey = static::CACHE_KEY . $call;
 
         return \Yii::$app->cache->getOrSet(
             $cacheKey,
