@@ -2,50 +2,80 @@
 
 namespace Ingelby\HoroscopeAstrology\Api;
 
-use Ingelby\HoroscopeAstrology\Exceptions\HoroscopeAstrologyRateLimitException;
 use Ingelby\HoroscopeAstrology\Exceptions\HoroscopeAstrologyResponseException;
 use Ingelby\HoroscopeAstrology\Models\DailyHoroscope;
-use Ingelby\HoroscopeAstrology\Models\HoroscopeAstrologyNews;
 use ingelby\toolbox\constants\HttpStatus;
 use ingelby\toolbox\services\InguzzleHandler;
 
 class DailyHoroscopeHandler extends AbstractHandler
 {
+    /**
+     * @param string $sign
+     * @return DailyHoroscope
+     * @throws HoroscopeAstrologyResponseException
+     */
+    public function getDailyHoroscope(string $sign)
+    {
+        $sign = ucfirst($sign);
+
+        $response = $this->fetch(
+            'json'
+        );
+
+        if (!isset($response['dailyhoroscope'], $response['dates'])) {
+            throw new HoroscopeAstrologyResponseException(HttpStatus::BAD_REQUEST, 'No horoscope or dates in response');
+        }
+
+        if (!is_array($response['dailyhoroscope'])) {
+            throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'Dailyhoroscope is not an array');
+        }
+
+        if (!array_key_exists($sign, $response['dailyhoroscope'])) {
+            throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No horoscope for sign: ' . $sign);
+        }
+
+        $model = new DailyHoroscope(
+            [
+                'sign'          => $sign,
+                'horoscope'     => $response['dailyhoroscope'][$sign],
+                'signDateRange' => $response['dates'][$sign] ?? null,
+            ]
+        );
+
+        return $model;
+    }
 
     /**
-     * @param string $symbol
-     * @return HoroscopeAstrologyNews[]
+     * @return DailyHoroscope[]
      * @throws HoroscopeAstrologyResponseException
-     * @throws HoroscopeAstrologyRateLimitException
      */
-    public function getDailyHoroscope(string $sign = null)
+    public function getDailyHoroscopes()
     {
         $response = $this->fetch(
             'json'
         );
 
-
-        if (empty($response) || !is_array($response)) {
-            throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No news for symbol: ' . $symbol);
+        if (!isset($response['dailyhoroscope'], $response['dates'])) {
+            throw new HoroscopeAstrologyResponseException(HttpStatus::BAD_REQUEST, 'No horoscope or dates in response');
         }
 
+        if (!is_array($response['dailyhoroscope'])) {
+            throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'Dailyhoroscope is not an array');
+        }
 
-        if($sign){ //-- star sign requested so provide just the daily horoscope for that sign
-			$model = new DailyHoroscope();
-			$model->setAttributes($response);
-			foreach($model->dailyhoroscope as $starSign=>$value):
-				if(strtolower($starSign)==strtolower($sign)){
-					return $value;
-				}
-			endforeach;
-			return false;
-		}else{ //-- no sign provided so give all the data
-			$model = new DailyHoroscope();
-			$model->setAttributes($response);
+        $horoscopes = [];
 
-			return $model;
-		}
-
+        foreach ($response['dailyhoroscope'] as $sign => $todaysHoroscope) {
+            $horoscopes[] = new DailyHoroscope(
+                [
+                    'sign'          => $sign,
+                    'horoscope'     => $todaysHoroscope,
+                    'signDateRange' => $response['dates'][$sign] ?? null,
+                ]
+            );
+        }
+        
+        return $horoscopes;
     }
 }
 

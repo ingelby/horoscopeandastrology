@@ -17,7 +17,7 @@ class AbstractHandler extends InguzzleHandler
 {
     protected const DEFAULT_URL = 'https://horoscopes-and-astrology.com/';
     protected const CACHE_KEY = 'HOROSCOPEASTROLOGY_';
-    protected const CACHE_TAG_DEPENDANCY = 'HOROSCOPEASTROLOGY';
+    public const CACHE_TAG_DEPENDANCY = 'HOROSCOPEASTROLOGY';
 
     /**
      * @var string
@@ -55,11 +55,9 @@ class AbstractHandler extends InguzzleHandler
 	 * @param string $call
      * @param array  $headers
      * @throws HoroscopeAstrologyResponseException
-     * @throws HoroscopeAstrologyRateLimitException
      */
     public function fetch(string $call)
     {
-
         $cacheKey = static::CACHE_KEY . $call;
 
         return \Yii::$app->cache->getOrSet(
@@ -70,7 +68,12 @@ class AbstractHandler extends InguzzleHandler
 				} catch (InguzzleClientException $e) {
 					LoggingHelper::logError($e);
                 } catch (InguzzleInternalServerException | InguzzleServerException $e) {
-					throw new HoroscopeAstrologyResponseException($e->statusCode, 'Error contacting Horoscope and Astrology', 0, $e);
+					throw new HoroscopeAstrologyResponseException(
+					    $e->statusCode,
+                        'Error contacting Horoscope and Astrology',
+                        0,
+                        $e
+                    );
                 }
             },
             $this->cacheTimeout,
