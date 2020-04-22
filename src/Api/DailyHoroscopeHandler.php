@@ -14,7 +14,7 @@ class DailyHoroscopeHandler extends AbstractHandler
      * @return DailyHoroscope
      * @throws HoroscopeAstrologyResponseException
      */
-    public function getDailyHoroscope(string $sign)
+    public function getDailyHoroscope(string $sign=null)
     {
         $sign = ucfirst($sign);
 
@@ -74,7 +74,7 @@ class DailyHoroscopeHandler extends AbstractHandler
                 ]
             );
         }
-        
+
         return $horoscopes;
     }
 }
