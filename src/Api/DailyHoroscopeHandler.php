@@ -17,6 +17,7 @@ class DailyHoroscopeHandler extends AbstractHandler
     public function getDailyHoroscope(string $sign=null)
     {
         $sign = ucfirst($sign);
+		$horoscopes = [];
 
         $response = $this->fetch(
             'json'
@@ -34,6 +35,28 @@ class DailyHoroscopeHandler extends AbstractHandler
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No horoscope for sign: ' . $sign);
         }
 
+        if(!$sign){
+			foreach ($response['dailyhoroscope'] as $sign => $todaysHoroscope) {
+
+				$doc = new \DOMDocument();
+				$doc->loadHTML($todaysHoroscope);
+				$xpath = new \DOMXPath($doc);
+				foreach ($xpath->query('//a') as $node) {
+					$node->parentNode->removeChild($node);
+				}
+				$todaysHoroscope = $doc->saveHTML();
+
+				$horoscopes[] = new DailyHoroscope(
+					[
+						'sign'          => $sign,
+						'horoscope'     => $todaysHoroscope,
+						'signDateRange' => $response['dates'][$sign] ?? null,
+					]
+				);
+			}
+
+			return $horoscopes;
+		}
         $model = new DailyHoroscope(
             [
                 'sign'          => $sign,
@@ -42,7 +65,7 @@ class DailyHoroscopeHandler extends AbstractHandler
             ]
         );
 
-        return $model;
+        return $sign?$model:$horoscopes;
     }
 
     /**
