@@ -66,6 +66,15 @@ class DailyHoroscopeHandler extends AbstractHandler
         $horoscopes = [];
 
         foreach ($response['dailyhoroscope'] as $sign => $todaysHoroscope) {
+
+			$doc = new \DOMDocument();
+			$doc->loadHTML($todaysHoroscope);
+			$xpath = new \DOMXPath($doc);
+			foreach ($xpath->query('//a') as $node) {
+				$node->parentNode->removeChild($node);
+			}
+			$todaysHoroscope = $doc->saveHTML();
+
             $horoscopes[] = new DailyHoroscope(
                 [
                     'sign'          => $sign,
