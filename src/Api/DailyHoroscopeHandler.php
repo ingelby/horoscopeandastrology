@@ -56,58 +56,25 @@ class DailyHoroscopeHandler extends AbstractHandler
 			}
 
 			return $horoscopes;
-		}
-        $model = new DailyHoroscope(
-            [
-                'sign'          => $sign,
-                'horoscope'     => $response['dailyhoroscope'][$sign],
-                'signDateRange' => $response['dates'][$sign] ?? null,
-            ]
-        );
-
-        return $sign?$model:$horoscopes;
-    }
-
-    /**
-     * @return DailyHoroscope[]
-     * @throws HoroscopeAstrologyResponseException
-     */
-    public function getDailyHoroscopes()
-    {
-        $response = $this->fetch(
-            'json'
-        );
-
-        if (!isset($response['dailyhoroscope'], $response['dates'])) {
-            throw new HoroscopeAstrologyResponseException(HttpStatus::BAD_REQUEST, 'No horoscope or dates in response');
-        }
-
-        if (!is_array($response['dailyhoroscope'])) {
-            throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'Dailyhoroscope is not an array');
-        }
-
-        $horoscopes = [];
-
-        foreach ($response['dailyhoroscope'] as $sign => $todaysHoroscope) {
-
+		}else{
 			$doc = new \DOMDocument();
-			$doc->loadHTML($todaysHoroscope);
+			$doc->loadHTML($response['dailyhoroscope'][$sign]);
 			$xpath = new \DOMXPath($doc);
 			foreach ($xpath->query('//a') as $node) {
 				$node->parentNode->removeChild($node);
 			}
-			$todaysHoroscope = $doc->saveHTML();
+			$response['dailyhoroscope'][$sign] = $doc->saveHTML();
+			$model = new DailyHoroscope(
+				[
+					'sign'          => $sign,
+					'horoscope'     => $response['dailyhoroscope'][$sign],
+					'signDateRange' => $response['dates'][$sign] ?? null,
+				]
+			);
+		}
 
-            $horoscopes[] = new DailyHoroscope(
-                [
-                    'sign'          => $sign,
-                    'horoscope'     => $todaysHoroscope,
-                    'signDateRange' => $response['dates'][$sign] ?? null,
-                ]
-            );
-        }
-
-        return $horoscopes;
+        return $sign?$model:$horoscopes;
     }
+
 }
 
