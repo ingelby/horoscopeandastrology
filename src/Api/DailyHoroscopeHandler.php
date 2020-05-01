@@ -31,7 +31,7 @@ class DailyHoroscopeHandler extends AbstractHandler
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'Dailyhoroscope is not an array');
         }
 
-        if (!array_key_exists($sign, $response['dailyhoroscope'])) {
+        if ($sign && !array_key_exists($sign, $response['dailyhoroscope'])) {
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No horoscope for sign: ' . $sign);
         }
 
