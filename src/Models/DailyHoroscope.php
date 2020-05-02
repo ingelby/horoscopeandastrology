@@ -36,4 +36,21 @@ class DailyHoroscope extends Model
             ],
         ];
     }
+
+    /**
+     * @return string
+     */
+    public function getHtmlStrippedHoroscope(): string
+    {
+        $todaysHoroscope = $this->horoscope;
+        $doc = new \DOMDocument();
+        $doc->loadHTML($todaysHoroscope);
+        $xpath = new \DOMXPath($doc);
+        foreach ($xpath->query('//a') as $node) {
+            $node->parentNode->removeChild($node);
+        }
+        $todaysHoroscope = $doc->saveHTML();
+
+        return $todaysHoroscope;
+    }
 }
