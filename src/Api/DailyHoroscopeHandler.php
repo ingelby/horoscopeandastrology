@@ -34,11 +34,11 @@ class DailyHoroscopeHandler extends AbstractHandler
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No horoscope for sign: ' . $sign);
         }
 
-		$reading = mb_convert_encoding(response['dailyhoroscope'][$sign],"HTML-ENTITIES","UTF-8")?? null;
+		$todaysHoroscope = mb_convert_encoding(response['dailyhoroscope'][$sign],"HTML-ENTITIES","UTF-8")?? null;
         $model = new DailyHoroscope(
             [
                 'sign'          => $sign,
-                'horoscope'     => $reading,
+                'horoscope'     => $todaysHoroscope,
                 'signDateRange' => $response['dates'][$sign] ?? null,
             ]
         );
@@ -68,12 +68,12 @@ class DailyHoroscopeHandler extends AbstractHandler
 
         foreach ($response['dailyhoroscope'] as $sign => $todaysHoroscope) {
 
-			$reading = mb_convert_encoding($todaysHoroscope,"HTML-ENTITIES","UTF-8")?? null;
+			$todaysHoroscope = mb_convert_encoding($todaysHoroscope,"HTML-ENTITIES","UTF-8")?? null;
 
             $horoscopes[] = new DailyHoroscope(
                 [
                     'sign'          => $sign,
-                    'horoscope'     => $reading,
+                    'horoscope'     => $todaysHoroscope,
                     'signDateRange' => response['dates'][$sign]?? null,
                 ]
             );
