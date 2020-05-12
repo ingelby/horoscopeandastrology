@@ -34,7 +34,7 @@ class DailyHoroscopeHandler extends AbstractHandler
             throw new HoroscopeAstrologyResponseException(HttpStatus::NOT_FOUND, 'No horoscope for sign: ' . $sign);
         }
 
-		$todaysHoroscope = mb_convert_encoding(response['dailyhoroscope'][$sign],"HTML-ENTITIES","UTF-8")?? null;
+		$todaysHoroscope = mb_convert_encoding($response['dailyhoroscope'][$sign],"HTML-ENTITIES","UTF-8")?? null;
         $model = new DailyHoroscope(
             [
                 'sign'          => $sign,
