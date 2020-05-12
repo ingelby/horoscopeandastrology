@@ -74,7 +74,7 @@ class DailyHoroscopeHandler extends AbstractHandler
                 [
                     'sign'          => $sign,
                     'horoscope'     => $todaysHoroscope,
-                    'signDateRange' => response['dates'][$sign]?? null,
+                    'signDateRange' => $response['dates'][$sign]?? null,
                 ]
             );
         }
